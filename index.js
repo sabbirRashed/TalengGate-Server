@@ -8,6 +8,7 @@ const uri = process.env.MONGODB_URI;
 const port = process.env.PORT || 5000;
 
 app.use(cors())
+app.use(express.json())
 
 const client = new MongoClient(uri, {
     serverApi: {
@@ -22,6 +23,14 @@ const run = async () => {
         await client.connect();
 
         const db = client.db('TalentGate');
+        const jobCollection = db.collection('jobs')
+
+        app.post("/jobs", async(req, res)=>{
+            const newJobs = req.body;
+            const result = await jobCollection.insertOne(newJobs);
+            res.send(result)
+        })
+        
 
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
