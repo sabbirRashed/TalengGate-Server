@@ -25,18 +25,34 @@ const run = async () => {
         const db = client.db('TalentGate');
         const jobCollection = db.collection('jobs')
 
-        app.post("/jobs", async(req, res)=>{
+        app.get("/api/jobs", async(req, res)=>{
+            console.log(req.query);
+            const query = {};
+            if(req.query.companyId){
+                query.companyId = req.query.companyId;
+            }
+            if(req.query.status){
+                query.status = req.query.status;
+            }
+
+            const cursor = await jobCollection.find(query);
+            const result = await cursor.toArray();
+            res.send(result);
+        })
+
+        app.post("/api/jobs", async(req, res)=>{
             const newJobs = req.body;
             const result = await jobCollection.insertOne(newJobs);
             res.send(result)
         })
+
         
 
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
     } finally {
         // Ensures that the client will close when you finish/error
-        await client.close();
+        // await client.close();
     }
 };
 
