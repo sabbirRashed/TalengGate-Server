@@ -23,15 +23,16 @@ const run = async () => {
         await client.connect();
 
         const db = client.db('TalentGate');
-        const jobCollection = db.collection('jobs')
+        const jobCollection = db.collection('jobs');
+        const companyCollection = db.collection('companies')
 
-        app.get("/api/jobs", async(req, res)=>{
+        app.get("/api/jobs", async (req, res) => {
             console.log(req.query);
             const query = {};
-            if(req.query.companyId){
+            if (req.query.companyId) {
                 query.companyId = req.query.companyId;
             }
-            if(req.query.status){
+            if (req.query.status) {
                 query.status = req.query.status;
             }
 
@@ -40,13 +41,20 @@ const run = async () => {
             res.send(result);
         })
 
-        app.post("/api/jobs", async(req, res)=>{
+        app.post("/api/jobs", async (req, res) => {
             const newJobs = req.body;
             const result = await jobCollection.insertOne(newJobs);
             res.send(result)
         })
 
-        
+        // company related api
+        app.post('/api/companies', async (req, res) => {
+            const newCompany = req.body;
+            const result = await companyCollection.insertOne(newCompany);
+            res.send(result);
+        })
+
+
 
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
