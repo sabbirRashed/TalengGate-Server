@@ -27,8 +27,8 @@ const run = async () => {
         const companyCollection = db.collection('companies')
 
         app.get("/api/jobs", async (req, res) => {
-            console.log(req.query);
             const query = {};
+
             if (req.query.companyId) {
                 query.companyId = req.query.companyId;
             }
@@ -48,6 +48,16 @@ const run = async () => {
         })
 
         // company related api
+        app.get('/api/my/company', async(req, res)=>{
+            const query={};
+
+            if(req.query.recruiterId){
+                query.recruiterId = req.query.recruiterId;
+            }
+            const result = companyCollection.findOne(query);
+            return result;
+        })
+
         app.post('/api/companies', async (req, res) => {
             const newCompany = req.body;
             const result = await companyCollection.insertOne(newCompany);
