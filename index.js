@@ -2,7 +2,7 @@ const express = require('express');
 const app = express()
 const cors = require('cors')
 require('dotenv').config();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 const uri = process.env.MONGODB_URI;
 const port = process.env.PORT || 5000;
@@ -37,12 +37,12 @@ const run = async () => {
 
 
         // Job related API
-        app.get('/api/jobs', async(req,res)=>{
-            const cursor = jobCollection.find();
-            const result = await cursor.toArray();
-            res.send(result);
-        })
-        
+        // app.get('/api/jobs', async(req,res)=>{
+        //     const cursor = jobCollection.find();
+        //     const result = await cursor.toArray();
+        //     res.send(result);
+        // })
+
         app.get("/api/jobs", async (req, res) => {
             const query = {};
 
@@ -56,6 +56,17 @@ const run = async () => {
             const cursor = jobCollection.find(query);
             const result = await cursor.toArray();
             res.send(result);
+        })
+
+        app.get('/api/job/:id', async(req, res)=>{
+            const jobId = req.params.id;
+            
+            const query = {
+                _id: new ObjectId(jobId)
+            }
+            const result = await jobCollection.findOne(query);
+            console.log(result, ":result");
+            res.send(result)
         })
 
         app.post("/api/jobs", async (req, res) => {
@@ -82,7 +93,6 @@ const run = async () => {
                 query.recruiterId = req.query.recruiterId;
             }
             const result = await companyCollection.findOne(query);
-            console.log("company:", result);
             res.send(result || {});
         })
 
