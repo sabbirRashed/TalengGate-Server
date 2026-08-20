@@ -37,6 +37,12 @@ const run = async () => {
 
 
         // Job related API
+        app.get('/api/jobs', async(req,res)=>{
+            const cursor = jobCollection.find();
+            const result = await cursor.toArray();
+            res.send(result);
+        })
+        
         app.get("/api/jobs", async (req, res) => {
             const query = {};
 
