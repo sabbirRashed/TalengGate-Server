@@ -26,6 +26,7 @@ const run = async () => {
         const jobCollection = db.collection('jobs');
         const companyCollection = db.collection('companies');
         const userCollection = db.collection('user');
+        const jobApplicationCollection = db.collection('applicants');
 
         // User related API
         app.get('/api/users', async (req, res) => {
@@ -37,12 +38,6 @@ const run = async () => {
 
 
         // Job related API
-        // app.get('/api/jobs', async(req,res)=>{
-        //     const cursor = jobCollection.find();
-        //     const result = await cursor.toArray();
-        //     res.send(result);
-        // })
-
         app.get("/api/jobs", async (req, res) => {
             const query = {};
 
@@ -77,6 +72,17 @@ const run = async () => {
             }
             const result = await jobCollection.insertOne(newJobs);
             res.send(result)
+        })
+
+        // Applicants related API
+        app.post('/api/applicants', async(req, res)=>{
+            const application= req.body;
+            const newApplication = {
+                ...application,
+                createAt: new Date()
+            }
+            const result = await jobApplicationCollection.insertOne(newApplication);
+            res.send(result);
         })
 
         // company related api
