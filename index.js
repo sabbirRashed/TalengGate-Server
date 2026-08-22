@@ -140,8 +140,27 @@ const run = async () => {
             const plan = await planCollection.findOne(query);
             res.send(plan);
         })
-        
-     
+
+        //  Subscriptions
+        app.post('/api/subscription', async (req, res) => {
+            const subscriptionData = req.body;
+
+            const newSubscription = {
+                ...subscriptionData,
+                createdAt: new Date(),
+            }
+            const result = await subscriptionCollection.insertOne(newSubscription);
+
+            // update the user plan subscription
+            const filter = {email: subscriptionData.email};
+            const updateDocument = {
+                $set: {
+                    plan: subscriptionData.planId
+                }
+            }
+            const updateResult = await userCollection.updateOne(filter, updateDocument)
+            res.send(updateResult);
+        })
 
 
 
