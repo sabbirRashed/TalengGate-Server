@@ -27,6 +27,8 @@ const run = async () => {
         const companyCollection = db.collection('companies');
         const userCollection = db.collection('user');
         const jobApplicationCollection = db.collection('applicants');
+        const planCollection = db.collection('plans');
+        const subscriptionCollection = db.collection('subscriptions')
 
         // User related API
         app.get('/api/users', async (req, res) => {
@@ -53,9 +55,9 @@ const run = async () => {
             res.send(result);
         })
 
-        app.get('/api/job/:id', async(req, res)=>{
+        app.get('/api/job/:id', async (req, res) => {
             const jobId = req.params.id;
-            
+
             const query = {
                 _id: new ObjectId(jobId)
             }
@@ -74,9 +76,25 @@ const run = async () => {
             res.send(result)
         })
 
-        // Applicants related API
-        app.post('/api/applicants', async(req, res)=>{
-            const application= req.body;
+        // Application related API
+        app.get('/api/application', async (req, res) => {
+            const query = {};
+
+            if (req.query.applicantId) {
+                query.applicantId = req.query.applicantId;
+            }
+            if (req.query.jobId) {
+                query.jobId = req.query.jobId;
+            }
+
+            const cursor = jobApplicationCollection.find(query);
+            const result = await (cursor).toArray();
+            console.log('result', result);
+            res.send(result)
+        })
+
+        app.post('/api/application', async (req, res) => {
+            const application = req.body;
             const newApplication = {
                 ...application,
                 createAt: new Date()
@@ -111,6 +129,19 @@ const run = async () => {
             const result = await companyCollection.insertOne(newCompany);
             res.send(result);
         })
+
+        //  Plans
+        app.get('/api/plan', async (req, res) => {
+            const query = {};
+
+            if (req.query.plan_id) {
+                query.plan_id = req.query.plan_id;
+            }
+            const plan = await planCollection.findOne(query);
+            res.send(plan);
+        })
+        
+     
 
 
 
